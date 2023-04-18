@@ -1,11 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class parse {
-    public static void main(String[] args) throws FileNotFoundException {
-        File NFA = new File("x.nfa");
-        ParseStudentA(NFA);
-    }
+public class Parse {
     // ParseStudentA should read the file and store the transition table in a hash table
     public static ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], String[]> ParseStudentA(File NFA) throws FileNotFoundException {
         Scanner scan = new Scanner(NFA);
