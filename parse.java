@@ -88,12 +88,31 @@ public class parse {
                 transitionTable.put(transitions, nodes);
             }
         }
-        System.out.println(transitionTable.get(new Pair<Character, Character>('0', 'L')));
+        scan.nextLine();
 
-        // scan.nextLine();
-        // String startState = scan.nextLine();
-        // String finalStates = scan.nextLine();
-        // scan. nextLine();
+        String startState = scan.nextLine();
+        String[] startStateArray = startState.split(" ");
+        startState = startStateArray[startStateArray.length - 1];
+        
+        String finalStates = scan.nextLine();
+        String[] finalStatesArray = finalStates.split(" ");
+        finalStates = finalStatesArray[finalStatesArray.length - 1];
+        finalStatesArray = finalStates.split(",");
+        for(int i = 0; i < finalStatesArray.length; i++) {
+            System.out.println(finalStatesArray[i]);
+        }
+
+        scan.nextLine();
+        scan.nextLine();
+        scan.nextLine();
+        ArrayList<String> input = new ArrayList<String>();
+        while(scan.hasNextLine()) {
+            String line = scan.nextLine();
+            input.add(line);
+        }
         scan.close();
+
+        //going to have to return a data structure which contains the transition table, start state, accepting states, and the input strings
+        //return transitionTable;
     }
 }
