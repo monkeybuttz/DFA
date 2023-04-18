@@ -1,6 +1,45 @@
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
+
+class Pair<state, alphabet>{
+    private state state;
+    private alphabet alphabet;
+
+    public Pair(state state, alphabet alphabet) {
+        this.state = state;
+        this.alphabet = alphabet;
+    }
+
+    public state getState() {
+        return state;
+    }
+
+    public alphabet getAlphabet() {
+        return alphabet;
+    }
+
+    public void setState(state state) {
+        this.state = state;
+    }
+
+    public void setAlphabet(alphabet alphabet) {
+        this.alphabet = alphabet;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pair<?, ?> pair = (Pair<?, ?>) o;
+        return Objects.equals(state, pair.state) &&
+                Objects.equals(alphabet, pair.alphabet);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(state, alphabet);
+    }
+}
 
 public class parse {
 
@@ -11,9 +50,11 @@ public class parse {
     // ParseStudentA should read the file and store the transition table in a hash table
     public static void ParseStudentA(File NFA) throws FileNotFoundException {
         Scanner scan = new Scanner(NFA);
-        
-        Hashtable<Character, Integer> transitions = new Hashtable<Character, Integer>();
-        Hashtable<Integer, Hashtable<Character, Integer>> transitionTable = new Hashtable<Integer, Hashtable<Character, Integer>>();
+
+        // main data structure
+        // key: Pair<current_state, alphabet>
+        // value: ArrayList<transition_states>
+        Hashtable<Pair<Character, Character>, ArrayList<Integer>> transitionTable = new Hashtable<Pair<Character, Character>, ArrayList<Integer>>();
 
         String num_of_states = scan.nextLine();
         String[] stateArray = num_of_states.split(" ");
@@ -32,24 +73,27 @@ public class parse {
         for(Integer i = 0; i < states; i++) {
             String line = scan.nextLine();
             String[] lineArray = line.split(" ");
-            char key = lineArray[0].charAt(0);
+            Character key = lineArray[0].charAt(0);
             for(int j = 1; j < lineArray.length; j++) {
                 String value = lineArray[j];
                 String[] values = value.split("");
+                ArrayList<Integer> nodes = new ArrayList<Integer>();
+                Pair<Character, Character> transitions = new Pair<Character, Character>(key, alphabetArray[j-1]);
                 for(int k = 1; k < values.length-1; k++) {
                     String check = values[k];
                     if (Character.isDigit(check.charAt(0)) == true){
-                        transitions.put(alphabetArray[j-1], Integer.parseInt(check));
+                        nodes.add(Integer.parseInt(check));
                     }
                 }
+                transitionTable.put(transitions, nodes);
             }
-            System.out.println(transitions.get('a'));
-            transitionTable.put(i, transitions);
         }
-        scan.nextLine();
-        String startState = scan.nextLine();
-        String finalStates = scan.nextLine();
-        scan. nextLine();
+        System.out.println(transitionTable.get(new Pair<Character, Character>('0', 'L')));
+
+        // scan.nextLine();
+        // String startState = scan.nextLine();
+        // String finalStates = scan.nextLine();
+        // scan. nextLine();
         scan.close();
     }
 }
