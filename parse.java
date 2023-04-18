@@ -1,48 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-class Pair<state, alphabet>{
-    private state state;
-    private alphabet alphabet;
-
-    public Pair(state state, alphabet alphabet) {
-        this.state = state;
-        this.alphabet = alphabet;
-    }
-
-    public state getState() {
-        return state;
-    }
-
-    public alphabet getAlphabet() {
-        return alphabet;
-    }
-
-    public void setState(state state) {
-        this.state = state;
-    }
-
-    public void setAlphabet(alphabet alphabet) {
-        this.alphabet = alphabet;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Pair<?, ?> pair = (Pair<?, ?>) o;
-        return Objects.equals(state, pair.state) &&
-                Objects.equals(alphabet, pair.alphabet);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(state, alphabet);
-    }
-}
-
 public class parse {
-
     public static void main(String[] args) throws FileNotFoundException {
         File NFA = new File("x.nfa");
         ParseStudentA(NFA);
@@ -93,14 +52,11 @@ public class parse {
         String startState = scan.nextLine();
         String[] startStateArray = startState.split(" ");
         startState = startStateArray[startStateArray.length - 1];
-        
+
         String finalStates = scan.nextLine();
         String[] finalStatesArray = finalStates.split(" ");
         finalStates = finalStatesArray[finalStatesArray.length - 1];
         finalStatesArray = finalStates.split(",");
-        for(int i = 0; i < finalStatesArray.length; i++) {
-            System.out.println(finalStatesArray[i]);
-        }
 
         scan.nextLine();
         scan.nextLine();
