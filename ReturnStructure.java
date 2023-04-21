@@ -18,6 +18,19 @@ public class ReturnStructure<PairedHashTable, startState, acceptingStates, input
         return PairedHashTable;
     }
 
+    //prints hash table of pairs and list of transition nodes, useful for debugging
+    public void printHashTable(Hashtable<Pair<Character, Character>, ArrayList<Integer>> pairHashTbl)
+    {
+        List<Pair<Character, Character>> sortedKeys = new ArrayList<>(pairHashTbl.keySet());
+        Collections.sort(sortedKeys, Comparator.<Pair<Character, Character>, Character>comparing(Pair::getState).thenComparing(Pair::getAlphabet));
+
+        for (Pair<Character, Character> currentKey : sortedKeys) 
+        {
+            System.out.println("State: " + currentKey.getState() + " Alphabet: " + currentKey.getAlphabet());
+            System.out.println("Transition nodes: " + pairHashTbl.get(currentKey) + "\n");
+        }
+    }
+
     public String getStartState() {
         return startState;
     }
