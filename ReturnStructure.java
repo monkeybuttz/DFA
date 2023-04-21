@@ -5,9 +5,9 @@ public class ReturnStructure<PairedHashTable, startState, acceptingStates, input
     private Hashtable<Pair<Character, Character>, ArrayList<Integer>> PairedHashTable;
     private String startState;
     private String[] acceptingStates;
-    private String[] inputStrings;
+    private ArrayList<String> inputStrings;
 
-    public ReturnStructure(Hashtable<Pair<Character, Character>, ArrayList<Integer>> PairedHashTable, String startState, String[] acceptingStates, String[] inputStrings) {
+    public ReturnStructure(Hashtable<Pair<Character, Character>, ArrayList<Integer>> PairedHashTable, String startState, String[] acceptingStates, ArrayList<String> inputStrings) {
         this.PairedHashTable = PairedHashTable;
         this.startState = startState;
         this.acceptingStates = acceptingStates;
@@ -39,7 +39,7 @@ public class ReturnStructure<PairedHashTable, startState, acceptingStates, input
         return acceptingStates;
     }
 
-    public String[] getInputStrings() {
+    public ArrayList<String> getInputStrings() {
         return inputStrings;
     }
 
@@ -55,7 +55,15 @@ public class ReturnStructure<PairedHashTable, startState, acceptingStates, input
         this.acceptingStates = acceptingStates;
     }
 
-    public void setInputStrings(String[] inputStrings) {
+    public void setInputStrings(ArrayList<String> inputStrings) {
         this.inputStrings = inputStrings;
+    }
+
+    //prints entire return structure (except input strings) for debugging
+    public void printStructure()
+    {
+        System.out.println("Initial state: " + getStartState() + "\nAccepting states: " + Arrays.toString(getAcceptingStates()) + "\n");
+        printHashTable(getPairedHashTable());
+        //System.out.println(getInputStrings().toString());
     }
 }

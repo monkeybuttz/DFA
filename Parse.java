@@ -3,7 +3,7 @@ import java.util.*;
 
 public class Parse {
     // ParseStudentA should read the file and store the transition table in a hash table
-    public static ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], String[]> ParseStudentA(File NFA) throws FileNotFoundException {
+    public static ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], ArrayList<String>> ParseStudentA(File NFA) throws FileNotFoundException {
         Scanner scan = new Scanner(NFA);
 
         // main data structure
@@ -64,7 +64,7 @@ public class Parse {
         }
         scan.close();
 
-        ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], String[]> returnStructure = new ReturnStructure<>(transitionTable, startState, startStateArray, finalStatesArray);
+        ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], ArrayList<String>> returnStructure = new ReturnStructure<>(transitionTable, startState, finalStatesArray, input);
         return returnStructure;
     }
 }
