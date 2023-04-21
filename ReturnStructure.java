@@ -31,6 +31,21 @@ public class ReturnStructure<PairedHashTable, startState, acceptingStates, input
         }
     }
 
+    //returns number of states in a complicated way
+    public int getNumStates() {
+        List<Pair<Character, Character>> keys = new ArrayList<>(getPairedHashTable().keySet());
+        int numLetters = 0;
+
+        for (Pair<Character, Character> key : keys) 
+        {
+            if (key.getState() == '0')
+            {
+                numLetters++;
+            }
+        }
+        return getPairedHashTable().size() / numLetters;
+    }
+
     public String getStartState() {
         return startState;
     }
