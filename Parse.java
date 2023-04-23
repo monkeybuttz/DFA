@@ -3,7 +3,7 @@ import java.util.*;
 
 public class Parse {
     // ParseStudentA should read the file and store the transition table in a hash table
-    public static ReturnStructure<> ParseStudentA(File NFA) throws FileNotFoundException {
+    public static ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> ParseStudentA(File NFA) throws FileNotFoundException {
         Scanner scan = new Scanner(NFA);
 
         // main data structure
@@ -68,7 +68,7 @@ public class Parse {
         return returnStructure;
     }
 
-    public static ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], String[], ArrayList<String>> ParseStudentB(File DFA) throws FileNotFoundException {
+    public static ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> ParseStudentB(File DFA) throws FileNotFoundException {
         Scanner scan = new Scanner(DFA);
 
         // main data structure
@@ -128,7 +128,7 @@ public class Parse {
         }
         scan.close();
 
-        ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], ArrayList<String>> returnStructure = new ReturnStructure<>(transitionTable, startState, finalStatesArray, input);
+        ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> returnStructure = new ReturnStructure<>(transitionTable, startState, finalStatesArray, alphabetArray, input);
         return returnStructure;
     }
 }

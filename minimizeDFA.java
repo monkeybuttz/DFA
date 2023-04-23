@@ -17,7 +17,7 @@ public class minimizeDFA {
     //you win
     public static void main(String[] args) throws FileNotFoundException {
         File DFA = new File("X.dfa");
-        ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], ArrayList<String>>  returnStruct = Parse.ParseStudentB(DFA);
+        ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>>  returnStruct = Parse.ParseStudentB(DFA);
         returnStruct.printStructure();
 
         //get num states

@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class ReturnStructure<PairedHashTable, startState, acceptingStates, inputStrings> {
+public class ReturnStructure<PairedHashTable, startState, acceptingStates, alphabetArray, inputStrings> {
 
     private Hashtable<Pair<Character, Character>, ArrayList<Integer>> PairedHashTable;
     private String startState;
