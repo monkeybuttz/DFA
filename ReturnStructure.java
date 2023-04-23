@@ -5,12 +5,14 @@ public class ReturnStructure<PairedHashTable, startState, acceptingStates, input
     private Hashtable<Pair<Character, Character>, ArrayList<Integer>> PairedHashTable;
     private String startState;
     private String[] acceptingStates;
+    private Character[] alphabetStrings;
     private ArrayList<String> inputStrings;
 
-    public ReturnStructure(Hashtable<Pair<Character, Character>, ArrayList<Integer>> PairedHashTable, String startState, String[] acceptingStates, ArrayList<String> inputStrings) {
+    public ReturnStructure(Hashtable<Pair<Character, Character>, ArrayList<Integer>> PairedHashTable, String startState, String[] acceptingStates, Character[] alphabetStrings, ArrayList<String> inputStrings) {
         this.PairedHashTable = PairedHashTable;
         this.startState = startState;
         this.acceptingStates = acceptingStates;
+        this.alphabetStrings = alphabetStrings;
         this.inputStrings = inputStrings;
     }
 
@@ -54,6 +56,10 @@ public class ReturnStructure<PairedHashTable, startState, acceptingStates, input
         return acceptingStates;
     }
 
+    public Character[] getAlphabetStrings() {
+        return alphabetStrings;
+    }
+
     public ArrayList<String> getInputStrings() {
         return inputStrings;
     }
@@ -72,6 +78,10 @@ public class ReturnStructure<PairedHashTable, startState, acceptingStates, input
 
     public void setInputStrings(ArrayList<String> inputStrings) {
         this.inputStrings = inputStrings;
+    }
+
+    public void setAlphabetStrings(Character[] alphabetStrings) {
+        this.alphabetStrings = alphabetStrings;
     }
 
     //prints entire return structure (except input strings) for debugging
