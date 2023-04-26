@@ -20,12 +20,11 @@ public class minimizeDFA {
         ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>>  returnStruct = Parse.ParseStudentB(DFA);
         returnStruct.printStructure();
 
-        //get num states
+        //save stuff from return structure
         int numStates = returnStruct.getNumStates();
-
-        //get accepting states
         List<String> acceptingStates = Arrays.asList(returnStruct.getAcceptingStates());
-        System.out.println(acceptingStates.toString());
+        List<Character> letters = Arrays.asList(returnStruct.getAlphabetStrings());
+        Hashtable<Pair<Character, Character>, ArrayList<Integer>> transitions = returnStruct.getPairedHashTable();
 
         //create matrix to find min DFA
         boolean [][] matrix = new boolean[numStates][numStates];
@@ -49,11 +48,55 @@ public class minimizeDFA {
                 }
             }
         }
-
         System.out.println();
         printMatrix(matrix);
 
-        
+        //if there is any unmarked pairs check each node in the pair for each input alphabet
+        //if a pair leads to a marked pair, then mark the pair you checked
+        //if not, leave the pair unmarked
+        //repeat this for all unmarked pairs until no markings can be made
+        int nodesMarked = 1;
+        while (nodesMarked > 0)
+        {
+            nodesMarked = 0;
+            for (int i = 0; i < matrix.length; i++)
+            {
+                for (int j = 0; j < i; j++)
+                {
+                    if (!matrix[i][j])
+                    {
+                        //inside unmarked pairs
+                        System.out.println("Checking [" + i + "][" + j + "]");
+
+                        //for all letters, compare transitions of each state at each letter
+                        for (char letter : letters)
+                        {
+                            Pair<Character, Character> iPair = new Pair<Character, Character>((Character) Integer.toString(i).charAt(0), letter);
+                            Pair<Character, Character> jPair = new Pair<Character, Character>((Character) Integer.toString(j).charAt(0), letter);
+                            
+                            if (transitions.containsKey(iPair) && transitions.containsKey(jPair))
+                            {
+                                //if matrix is true at transition states of pair at letter
+                                //then original pair of states is distinguisable
+                                int tempI = transitions.get(iPair).get(0);
+                                int tempJ = transitions.get(jPair).get(0);
+                                if (matrix[tempI][tempJ])
+                                {
+                                    System.out.println("Marked [" + i + "][" + j + "]\n");
+                                    matrix[i][j] = true;
+                                    nodesMarked++; //increment for the while loop
+                                    break; //exit for each loop because nodes are distinguishable
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            printMatrix(matrix);
+        }
+
+        //now combines any pairs that are indistinguishable into same state
+
     }
 
     //debug print matrix (lower half of triangle)
