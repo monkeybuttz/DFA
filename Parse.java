@@ -131,4 +131,16 @@ public class Parse {
         ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> returnStructure = new ReturnStructure<>(transitionTable, startState, finalStatesArray, alphabetArray, input);
         return returnStructure;
     }
+
+    //method to print a DFA
+    public static void printDFA(ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> dfa)
+    {
+        
+    }
+
+    //method to test input strings on DFA and prints parsing results
+    public static void testDFAStrings(ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> dfa)
+    {
+
+    }
 }

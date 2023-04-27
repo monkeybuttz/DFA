@@ -89,6 +89,6 @@ public class ReturnStructure<PairedHashTable, startState, acceptingStates, alpha
     {
         System.out.println("Initial state: " + getStartState() + "\nAccepting states: " + Arrays.toString(getAcceptingStates()) + "\n");
         printHashTable(getPairedHashTable());
-        //System.out.println(getInputStrings().toString());
+        System.out.println("Num states: " + getNumStates());
     }
 }
