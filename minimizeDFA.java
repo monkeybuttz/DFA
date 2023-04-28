@@ -39,6 +39,8 @@ public class minimizeDFA {
         Parse.printDFA(minDFA);
         System.out.println("\nParsing results of strings attached in " + inputFile + ":\n");
         Parse.testDFAStrings(minDFA);
+
+        System.out.println("\n|Q| " + returnStruct.getNumStates() + " -> " + minDFA.getNumStates());
     }
 
     public static ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> findMinDFA(ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> returnStruct)
