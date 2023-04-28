@@ -56,7 +56,7 @@ public class Parse {
 
         scan.nextLine();
         scan.nextLine();
-        scan.nextLine();
+        //removed third scan.nextLine() because first string is empty string
         ArrayList<String> input = new ArrayList<String>();
         while(scan.hasNextLine()) {
             String line = scan.nextLine();
@@ -120,7 +120,7 @@ public class Parse {
 
         scan.nextLine();
         scan.nextLine();
-        scan.nextLine();
+        //removed third scan.nextLine() because first string is empty string
         ArrayList<String> input = new ArrayList<String>();
         while(scan.hasNextLine()) {
             String line = scan.nextLine();
@@ -135,12 +135,91 @@ public class Parse {
     //method to print a DFA
     public static void printDFA(ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> dfa)
     {
-        
+        System.out.print("Sigma:");
+        for(char letter : dfa.getAlphabetStrings())
+        {
+            System.out.print("     " + letter);
+        }
+        System.out.print("\n------------------------------");
+
+        //sort keys by state and then alphabet
+        List<Pair<Character, Character>> sortedKeys = new ArrayList<>(dfa.getPairedHashTable().keySet());
+        Collections.sort(sortedKeys, Comparator.<Pair<Character, Character>, Character>comparing(Pair::getState).thenComparing(Pair::getAlphabet));
+
+        int count = 0;
+        for (Pair<Character, Character> currentKey : sortedKeys)
+        {
+            //every time theres a new letter, print state
+            if (count % dfa.getAlphabetStrings().length == 0)
+            {
+                System.out.print("\n    " + currentKey.getState() + ":");
+            }
+            System.out.print("     " + dfa.getPairedHashTable().get(currentKey).get(0));
+            count++;
+        }
+        System.out.println("\n------------------------------");
+        System.out.println(dfa.getStartState() + ": Initial State");
+
+        String[] accept = dfa.getAcceptingStates();
+
+        for (int i = 0; i < accept.length; i++)
+        {
+            if (i < (accept.length - 1))
+                System.out.print(accept[i] + ",");
+            else
+                System.out.print(accept[i] + ": Accepting State(s)\n");
+        }
     }
 
     //method to test input strings on DFA and prints parsing results
     public static void testDFAStrings(ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> dfa)
     {
+        ArrayList<String> testStrings = dfa.getInputStrings();
+        List<String> acceptingStates = Arrays.asList(dfa.getAcceptingStates());
+        Hashtable<Pair<Character, Character>, ArrayList<Integer>> transitions = dfa.getPairedHashTable();
 
+        int yes = 0;
+        int no = 0;
+
+        for(int i = 0; i < testStrings.size(); i++) //each string
+        {
+            String currState = dfa.getStartState();
+            String currString = testStrings.get(i);
+
+            if(currString.length() == 0 && acceptingStates.contains(currState)) //empty string
+            {
+                System.out.print("Yes  ");
+                yes++;
+            }
+
+            for (int j = 0; j < currString.length(); j++) //each char
+            {
+                char currchar = currString.charAt(j);
+                Pair<Character,Character> pair = new Pair<Character,Character>(currState.charAt(0), currchar);
+                
+                currState = String.valueOf(transitions.get(pair).get(0));
+                
+                if (j == (currString.length() - 1))
+                {
+                    if (acceptingStates.contains(currState))
+                    {
+                        System.out.print("Yes  ");
+                        yes++;
+
+                        if (yes + no == 15)
+                            System.out.print("\n");
+                    }
+                    else
+                    {
+                        System.out.print("No   ");
+                        no++;
+
+                        if (yes + no == 15)
+                            System.out.print("\n");
+                    }
+                }
+            }
+        }
+        System.out.println("\n\nYes: " + yes + " No: " + no);
     }
 }

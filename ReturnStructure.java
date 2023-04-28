@@ -23,6 +23,7 @@ public class ReturnStructure<PairedHashTable, startState, acceptingStates, alpha
     //prints hash table of pairs and list of transition nodes, useful for debugging
     public void printHashTable(Hashtable<Pair<Character, Character>, ArrayList<Integer>> pairHashTbl)
     {
+        //sort keys by state and then alphabet
         List<Pair<Character, Character>> sortedKeys = new ArrayList<>(pairHashTbl.keySet());
         Collections.sort(sortedKeys, Comparator.<Pair<Character, Character>, Character>comparing(Pair::getState).thenComparing(Pair::getAlphabet));
 
