@@ -15,14 +15,14 @@ public class NFA2DFA {
         String[] NFAfinalStates = returnStruct.getAcceptingStates();
         Character[] NFAalphabet = returnStruct.getAlphabetStrings();
         Integer NFAstates = returnStruct.getNumStates();
-        System.out.println(NFAstates);
         ArrayList<String> NFAinputStrings = returnStruct.getInputStrings();
         
         //algorithm to convert NFA transition table to DFA transition table
 
         //create the lambda closure of the start state
-        ArrayList<Integer> lambdaClosure = findLambdaClosure(NFAtransitionTable, 0);
-        System.out.println(lambdaClosure);
+
+        findLambdaClosure(NFAtransitionTable, 0);
+        
     
 
 
@@ -53,26 +53,26 @@ public class NFA2DFA {
     }
 
 
-    //find the lambda closure of the state given its nfa transition table
-    public static ArrayList<Integer> findLambdaClosure(Hashtable<Pair<Character, Character>, ArrayList<Integer>> NFAtransitionTable, Integer state) {
+    // recursive function to find the lambda closure of a state
+    public static void findLambdaClosure(Hashtable<Pair<Character, Character>, ArrayList<Integer>> NFAtransitionTable, int state) {
         ArrayList<Integer> lambdaClosure = new ArrayList<Integer>();
         lambdaClosure.add(state);
-        ArrayList<Integer> temp = new ArrayList<Integer>();
-        for(int i = 0; i < NFAtransitionTable.size(); i++) {
-            Pair<Character, Character> key = NFAtransitionTable.keys().nextElement();
-            Integer check = Character.getNumericValue(key.getFirst());
-            if (check == state && key.getSecond() == 'L') {
-                temp = NFAtransitionTable.get(key);
-                for (int j = 0; j < temp.size(); j++) {
-                    if (!lambdaClosure.contains(temp.get(j))) {
-                        lambdaClosure.add(temp.get(j));
-                    }
-                }
+
+        //sort keys by state and then alphabet
+        List<Pair<Character, Character>> sortedKeys = new ArrayList<>(NFAtransitionTable.keySet());
+        Collections.sort(sortedKeys, Comparator.<Pair<Character, Character>, Character>comparing(Pair::getState).thenComparing(Pair::getAlphabet));
+        
+        for (Pair<Character, Character> currentKey : sortedKeys) 
+        {
+            if(currentKey.getAlphabet() == 'L'){ 
+                lambdaClosure.add(Integer.parseInt(String.valueOf(currentKey.getState())));
+                System.out.println("State: " + currentKey.getState() + " Alphabet: " + currentKey.getAlphabet());
+                System.out.println("Transition nodes: " + NFAtransitionTable.get(currentKey) + "\n");
             }
+            
         }
-        return lambdaClosure;
+        
+
     }
-
-
-
 }
+    
