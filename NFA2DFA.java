@@ -20,10 +20,7 @@ public class NFA2DFA {
         //algorithm to convert NFA transition table to DFA transition table
 
         //create the lambda closure of the start state
-
-        findLambdaClosure(NFAtransitionTable, 0);
-        
-    
+        findLambdaClosure(NFAtransitionTable, 0, new ArrayList<Integer>());
 
 
     }
@@ -44,7 +41,7 @@ public class NFA2DFA {
 
 
     // find the start state of the dfa given then nfa start state given the lambda closure of the nfa transition table
-    public static String findStartState(String NFAstartState, ArrayList<Integer> lambdaClosure) {
+    public static String findDFAStartState(String NFAstartState, ArrayList<Integer> lambdaClosure) {
         String startState = NFAstartState;
         for (int i = 0; i < lambdaClosure.size(); i++) {
             startState += lambdaClosure.get(i);
@@ -53,8 +50,8 @@ public class NFA2DFA {
     }
 
 
-    // recursive function to find the lambda closure of a state
-    public static void findLambdaClosure(Hashtable<Pair<Character, Character>, ArrayList<Integer>> NFAtransitionTable, int state) {
+     // recursive function to find the lambda closure of a state
+     public static void findLambdaClosure(Hashtable<Pair<Character, Character>, ArrayList<Integer>> NFAtransitionTable, int state, ArrayList<Integer> lambdaTransList) {
         ArrayList<Integer> lambdaClosure = new ArrayList<Integer>();
         lambdaClosure.add(state);
 
@@ -74,5 +71,7 @@ public class NFA2DFA {
         
 
     }
+
+
+
 }
-    
