@@ -23,4 +23,14 @@ public class Pair<state, alphabet>{
     public void setAlphabet(alphabet alphabet) {
         this.alphabet = alphabet;
     }
+
+    //get first element of the pair
+    public state getFirst() {
+        return state;
+    }
+
+    //get second element of the pair
+    public alphabet getSecond() {
+        return alphabet;
+    }
 }
