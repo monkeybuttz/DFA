@@ -1,3 +1,4 @@
+import java.util.Objects;
 
 public class Pair<state, alphabet>{
     private state state;
@@ -32,5 +33,25 @@ public class Pair<state, alphabet>{
     //get second element of the pair
     public alphabet getSecond() {
         return alphabet;
+    }
+
+    //helps to compare pairs with pairs
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Pair)) {
+            return false;
+        }
+        Pair<?, ?> pair = (Pair<?, ?>) o;
+        return Objects.equals(state, pair.state) && Objects.equals(alphabet, pair.alphabet);
+    }
+
+    //makes sure hash code for objects with multiple fields 
+    //is same for objects with same fields
+    @Override
+    public int hashCode() {
+        return Objects.hash(state, alphabet);
     }
 }
