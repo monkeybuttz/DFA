@@ -13,6 +13,28 @@ public class NFA2DFA {
         File NFA = new File(inputFile);
         ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>>  returnStruct = Parse.ParseStudentA(NFA);
         convertNFA2DFA(returnStruct, NFA);
+
+        //get dfa file name
+        String dfaFileName = inputFile.substring(0, 1) + ".dfa";
+        File dfa = new File(dfaFileName);
+
+        //parse dfa file to return struct
+        ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>>  dfaStruct = Parse.ParseStudentB(dfa);
+        
+        //print dfa results
+        System.out.println("NFA " + inputFile + " to DFA " + dfaFileName + ":\n");
+        Parse.printDFA(dfaStruct);
+        System.out.println("\nParsing results of strings attached in " + inputFile + ":");
+        Parse.testDFAStrings(dfaStruct);
+
+        //find min dfa and print
+        ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> minDFA = minimizeDFA.findMinDFA(dfaStruct);
+        System.out.println("\n\nMinimized DFA from " + dfaFileName + ":\n");
+        Parse.printDFA(minDFA);
+        System.out.println("\nParsing results of strings attached in " + dfaFileName + ":\n");
+        Parse.testDFAStrings(minDFA);
+
+        System.out.println("\n|Q| " + dfaStruct.getNumStates() + " -> " + minDFA.getNumStates());
     }
 
     // takes the NFA in the return structure and converts it to a DFA and writes it to a file
@@ -125,11 +147,11 @@ public class NFA2DFA {
             fileName = fileName.substring(0, 1);
             fileName = fileName + ".dfa";
             File file = new File(fileName);
-            if (file.createNewFile()) {
-                System.out.println("File created: " + file.getName());
-            } else {
-                System.out.println("File already exists.");
-            }
+            // if (file.createNewFile()) {
+            //     System.out.println("File created: " + file.getName());
+            // } else {
+            //     System.out.println("File already exists.");
+            // }
             FileWriter fileWriter = new FileWriter(file);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             bufferedWriter.write("|Q|: " + DFAstates.size());
@@ -144,7 +166,7 @@ public class NFA2DFA {
             
             // write out the each of the states and their transitions
             for (int i = 0; i < DFAstates.size(); i++) {
-                bufferedWriter.write( "\t" + i + ":");
+                bufferedWriter.write( "    " + i + ":");
                 for (int j = 0; j < DFAalphabet.size(); j++) {
                     if (DFAtransitionTable.get(new Pair<Character, Character>(Character.forDigit(i, 10), DFAalphabet.get(j))) == null) {
                         bufferedWriter.write("    " + DFAstates.size());

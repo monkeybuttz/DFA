@@ -15,33 +15,33 @@ public class minimizeDFA {
     //combine indistinguishable states
     //reconstruct DFA
     //you win
-    public static void main(String[] args) throws FileNotFoundException {
-        //check proper arguments were provided
-        if (args.length != 1)
-        {
-            System.out.println("Usage: java minimizeDFA file.DFA");
-            System.exit(0);
-        }
+    // public static void main(String[] args) throws FileNotFoundException {
+    //     //check proper arguments were provided
+    //     if (args.length != 1)
+    //     {
+    //         System.out.println("Usage: java minimizeDFA file.DFA");
+    //         System.exit(0);
+    //     }
         
-        String inputFile = args[0];
-        File DFA = new File(inputFile);
+    //     String inputFile = args[0];
+    //     File DFA = new File(inputFile);
 
-        //parse original dfa file and print
-        ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>>  returnStruct = Parse.ParseStudentB(DFA);
-        System.out.println("DFA from " + inputFile + ":\n");
-        Parse.printDFA(returnStruct);
-        System.out.println("\nParsing results of strings attached in " + inputFile + ":");
-        Parse.testDFAStrings(returnStruct);
+    //     //parse original dfa file and print
+    //     ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>>  returnStruct = Parse.ParseStudentB(DFA);
+    //     System.out.println("DFA from " + inputFile + ":\n");
+    //     Parse.printDFA(returnStruct);
+    //     System.out.println("\nParsing results of strings attached in " + inputFile + ":");
+    //     Parse.testDFAStrings(returnStruct);
 
-        //find min dfa and print
-        ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> minDFA = findMinDFA(returnStruct);
-        System.out.println("\n\nMinimized DFA from " + inputFile + ":\n");
-        Parse.printDFA(minDFA);
-        System.out.println("\nParsing results of strings attached in " + inputFile + ":\n");
-        Parse.testDFAStrings(minDFA);
+    //     //find min dfa and print
+    //     ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> minDFA = findMinDFA(returnStruct);
+    //     System.out.println("\n\nMinimized DFA from " + inputFile + ":\n");
+    //     Parse.printDFA(minDFA);
+    //     System.out.println("\nParsing results of strings attached in " + inputFile + ":\n");
+    //     Parse.testDFAStrings(minDFA);
 
-        System.out.println("\n|Q| " + returnStruct.getNumStates() + " -> " + minDFA.getNumStates());
-    }
+    //     System.out.println("\n|Q| " + returnStruct.getNumStates() + " -> " + minDFA.getNumStates());
+    // }
 
     public static ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> findMinDFA(ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> returnStruct)
     {
