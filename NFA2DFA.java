@@ -22,16 +22,16 @@ public class NFA2DFA {
         ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>>  dfaStruct = Parse.ParseStudentB(dfa);
         
         //print dfa results
-        System.out.println("NFA " + inputFile + " to DFA " + dfaFileName + ":\n");
+        System.out.println("\n\nNFA: " + NFA.getName() + " to DFA: " + dfa.getName() + "\n");
         Parse.printDFA(dfaStruct);
-        System.out.println("\nParsing results of strings attached in " + inputFile + ":");
+        System.out.println("\nParsing results of strings attached in " + dfaFileName + ":");
         Parse.testDFAStrings(dfaStruct);
 
         //find min dfa and print
         ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> minDFA = minimizeDFA.findMinDFA(dfaStruct);
         System.out.println("\n\nMinimized DFA from " + dfaFileName + ":\n");
         Parse.printDFA(minDFA);
-        System.out.println("\nParsing results of strings attached in " + dfaFileName + ":\n");
+        System.out.println("\nParsing results of strings attached in " + dfaFileName + ":");
         Parse.testDFAStrings(minDFA);
 
         System.out.println("\n|Q| " + dfaStruct.getNumStates() + " -> " + minDFA.getNumStates());
@@ -147,11 +147,9 @@ public class NFA2DFA {
             fileName = fileName.substring(0, 1);
             fileName = fileName + ".dfa";
             File file = new File(fileName);
-            // if (file.createNewFile()) {
-            //     System.out.println("File created: " + file.getName());
-            // } else {
-            //     System.out.println("File already exists.");
-            // }
+            if (file.createNewFile()) {
+                System.out.println("File created: " + file.getName());
+            }
             FileWriter fileWriter = new FileWriter(file);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             bufferedWriter.write("|Q|: " + DFAstates.size());
