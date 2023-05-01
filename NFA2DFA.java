@@ -23,7 +23,6 @@ public class NFA2DFA {
         findLambdaClosure(NFAtransitionTable, Integer.parseInt(NFAstartState), lambdaTransList);
         Collections.sort(lambdaTransList);
         DFAstartState = lambdaTransList;
-        System.out.println("DFA start state: " + DFAstartState);
 
         //set dfa alphabet equal to nfa alphabet besides the lambda transition
         ArrayList<Character> DFAalphabet = new ArrayList<Character>();
@@ -32,7 +31,6 @@ public class NFA2DFA {
                 DFAalphabet.add(NFAalphabet[i]);
             }
         }
-        System.out.println("DFA alphabet: " + DFAalphabet);
 
         //create the dfa states list
         ArrayList<ArrayList<Integer>> DFAstates = new ArrayList<ArrayList<Integer>>();
@@ -78,52 +76,58 @@ public class NFA2DFA {
                     DFAtransition = union(DFAtransition, state1, NFAtransitionTable);
                 }
                 Collections.sort(DFAtransition);
-                System.out.println("DFA transition for " + DFAstates.get(i) + " with alphabet " + DFAalphabet.get(j) + ": " + DFAtransition);
+                //System.out.println("DFA transition for " + DFAstates.get(i) + " with alphabet " + DFAalphabet.get(j) + ": " + DFAtransition);
                 if (!DFAstates.contains(DFAtransition)) {
                     DFAstates.add(DFAtransition);
                 }
                 DFAtransitionTable.put(new Pair<Character, Character>(Character.forDigit(i, 10), DFAalphabet.get(j)), DFAtransition);
             }
         }
-        writeDFA(DFAtransitionTable, DFAstates, DFAalphabet, DFAstartState);
-    }
 
-    //write the dfa to a new file
-    public static void writeDFA(Hashtable<Pair<Character, Character>, ArrayList<Integer>> DFAtransitionTable, ArrayList<ArrayList<Integer>> DFAstates, ArrayList<Character> DFAalphabet, ArrayList<Integer> DFAstartState){
+        //find the accepting states for the dfa
+        ArrayList<Integer> DFAacceptingStates = new ArrayList<Integer>();
+        for(int i = 0; i < DFAstates.size(); i++){
+            System.out.println("DFA state: " + DFAstates.get(i));
+            }
+        }
+
+        //write out the dfa to a file
+        //writeDFA(DFAtransitionTable, DFAstates, DFAalphabet, DFAstartState, DFAacceptingStates);
+
+    
+
+    //write the dfa to a new file in Parse.printDFA format
+    public static void writeDFA(Hashtable<Pair<Character, Character>, ArrayList<Integer>> DFAtransitionTable, ArrayList<ArrayList<Integer>> DFAstates, ArrayList<Character> DFAalphabet, ArrayList<Integer> DFAstartState, ArrayList<Integer> DFAacceptingState){
         try {
             File file = new File("x.dfa");
             FileWriter fileWriter = new FileWriter(file);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            bufferedWriter.write("DFA");
+            bufferedWriter.write("|Q|: " + DFAstates.size());
             bufferedWriter.newLine();
-            bufferedWriter.write("states");
-            bufferedWriter.newLine();
-            for (int i = 0; i < DFAstates.size(); i++) {
-                bufferedWriter.write(Character.forDigit(i, 10));
-                bufferedWriter.newLine();
-            }
-            bufferedWriter.write("alphabet");
-            bufferedWriter.newLine();
+            bufferedWriter.write("Sigma:");
             for (int i = 0; i < DFAalphabet.size(); i++) {
-                bufferedWriter.write(DFAalphabet.get(i));
+                bufferedWriter.write("     " + DFAalphabet.get(i));
+            }
+            bufferedWriter.newLine();
+            bufferedWriter.write("------------------------------");
+            bufferedWriter.newLine();
+            
+            // write out the each of the states and their transitions
+            for (int i = 0; i < DFAstates.size(); i++) {
+                bufferedWriter.write(i + ": ");
+                for (int j = 0; j < DFAalphabet.size(); j++) {
+                    bufferedWriter.write("\t" + DFAalphabet.get(j) + ": " + DFAtransitionTable.get(new Pair<Character, Character>(Character.forDigit(i, 10), DFAalphabet.get(j))));
+                }
                 bufferedWriter.newLine();
             }
-            bufferedWriter.write("start");
+            bufferedWriter.write("------------------------------");
             bufferedWriter.newLine();
-            bufferedWriter.write(Character.forDigit(DFAstates.indexOf(DFAstartState), 10));
+            bufferedWriter.write("Initial state: " + DFAstates.indexOf(DFAstartState));
             bufferedWriter.newLine();
-            bufferedWriter.write("transitions");
-            bufferedWriter.newLine();
-            for (int i = 0; i < DFAstates.size(); i++) {
-                for (int j = 0; j < DFAalphabet.size(); j++) {
-                    bufferedWriter.write(Character.forDigit(i, 10));
-                    bufferedWriter.write(" ");
-                    bufferedWriter.write(DFAalphabet.get(j));
-                    bufferedWriter.write(" ");
-                    bufferedWriter.write(Character.forDigit(DFAstates.indexOf(DFAtransitionTable.get(new Pair<Character, Character>(Character.forDigit(i, 10), DFAalphabet.get(j)))), 10));
-                    bufferedWriter.newLine();
-                }
-            }
+
+
+
+
             bufferedWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
