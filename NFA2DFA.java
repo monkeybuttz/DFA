@@ -12,7 +12,6 @@ public class NFA2DFA {
     public static void convertNFA2DFA(ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>>  returnStruct) {
         Hashtable<Pair<Character, Character>, ArrayList<Integer>> NFAtransitionTable = returnStruct.getPairedHashTable();
         String NFAstartState = returnStruct.getStartState();
-        String[] NFAfinalStates = returnStruct.getAcceptingStates();
         Character[] NFAalphabet = returnStruct.getAlphabetStrings();
 
         //create the dfa transition table
@@ -56,14 +55,36 @@ public class NFA2DFA {
                 DFAtransition = union(DFAtransition, state1, NFAtransitionTable);
             }
             Collections.sort(DFAtransition);
-            System.out.println("DFA transition for " + DFAstartState + " with alphabet " + DFAalphabet.get(i) + ": " + DFAtransition);
             DFAtransitionTable.put(new Pair<Character, Character>(Character.forDigit(DFAstates.indexOf(DFAstartState), 10), DFAalphabet.get(i)), DFAtransition);
             if (!DFAstates.contains(DFAtransition)) {
                 DFAstates.add(DFAtransition);
             }
         }
 
-        
+        //do the same for the rest of the dfa states until all states have been visited
+        // if the state has already been visited, dont visit it again
+        // if there is no transition for a state, add a transition to a dead state
+        for (int i = 0; i < DFAstates.size(); i++) {
+            for (int j = 0; j < DFAalphabet.size(); j++) {
+                ArrayList<Integer> DFAtransition = new ArrayList<Integer>();
+                for (int k = 0; k < DFAstates.get(i).size(); k++) {
+                    ArrayList<Integer> state1 = findDFAtransition(NFAtransitionTable, DFAstates.get(i).get(k), DFAalphabet.get(j));
+                    for (int l = 0; l < state1.size(); l++) {
+                        ArrayList<Integer> lambdaTransList2 = new ArrayList<Integer>();
+                        findLambdaClosure(NFAtransitionTable, state1.get(l), lambdaTransList2);
+                        Collections.sort(lambdaTransList2);
+                        state1 = union(state1, lambdaTransList2, NFAtransitionTable);
+                    }
+                    DFAtransition = union(DFAtransition, state1, NFAtransitionTable);
+                }
+                Collections.sort(DFAtransition);
+                System.out.println("DFA transition for " + DFAstates.get(i) + " with alphabet " + DFAalphabet.get(j) + ": " + DFAtransition);
+                if (!DFAstates.contains(DFAtransition)) {
+                    DFAstates.add(DFAtransition);
+                }
+                DFAtransitionTable.put(new Pair<Character, Character>(Character.forDigit(i, 10), DFAalphabet.get(j)), DFAtransition);
+            }
+        }
     }
 
     //combine 2 arraylists into 1
