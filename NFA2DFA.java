@@ -35,94 +35,35 @@ public class NFA2DFA {
         }
         System.out.println("DFA alphabet: " + DFAalphabet);
 
-        //find the dfa start state and all of its transitions and print them out
-        //add the start state and its transitions to the dfa transition table
-        ArrayList<Integer> DFAstartStateTransitions = new ArrayList<Integer>();
+        //create the dfa states list
+        ArrayList<ArrayList<Integer>> DFAstates = new ArrayList<ArrayList<Integer>>();
+        DFAstates.add(DFAstartState);
+
+        //find the transitions for the dfa start state
+        //find the lambda closure of each transition
+        //get the union of the lambda closure and the transition
+        //print out the transitions for the dfa start state
         for (int i = 0; i < DFAalphabet.size(); i++) {
-            DFAstartStateTransitions = findDFAtransition(NFAtransitionTable, DFAstartState.get(0), DFAalphabet.get(i));
-            Collections.sort(DFAstartStateTransitions);
-            DFAtransitionTable.put(new Pair<Character, Character>(Character.forDigit(DFAstartState.get(0), 10), DFAalphabet.get(i)), DFAstartStateTransitions);
+            ArrayList<Integer> DFAtransition = new ArrayList<Integer>();
+            for (int j = 0; j < DFAstartState.size(); j++) {
+                ArrayList<Integer> state1 = findDFAtransition(NFAtransitionTable, DFAstartState.get(j), DFAalphabet.get(i));
+                for (int k = 0; k < state1.size(); k++) {
+                    ArrayList<Integer> lambdaTransList2 = new ArrayList<Integer>();
+                    findLambdaClosure(NFAtransitionTable, state1.get(k), lambdaTransList2);
+                    Collections.sort(lambdaTransList2);
+                    state1 = union(state1, lambdaTransList2, NFAtransitionTable);
+                }
+                DFAtransition = union(DFAtransition, state1, NFAtransitionTable);
+            }
+            Collections.sort(DFAtransition);
+            System.out.println("DFA transition for " + DFAstartState + " with alphabet " + DFAalphabet.get(i) + ": " + DFAtransition);
+            DFAtransitionTable.put(new Pair<Character, Character>(Character.forDigit(DFAstates.indexOf(DFAstartState), 10), DFAalphabet.get(i)), DFAtransition);
+            if (!DFAstates.contains(DFAtransition)) {
+                DFAstates.add(DFAtransition);
+            }
         }
 
-        //grab each of the transitions from the start state and make each list a new state
-        //if the state is not in the dfa transition table, add it
-
-        //create a list of states that have been visited
-        ArrayList<ArrayList<Integer>> visitedStates = new ArrayList<ArrayList<Integer>>();
-        visitedStates.add(DFAstartState);
-
-        //create a list of states that have not been visited
-        ArrayList<ArrayList<Integer>> unvisitedStates = new ArrayList<ArrayList<Integer>>();
-        unvisitedStates.add(DFAstartState);
-
-        //create a list of states that have been added to the dfa transition table
-        ArrayList<ArrayList<Integer>> addedStates = new ArrayList<ArrayList<Integer>>();
-        addedStates.add(DFAstartState);
-
-        //create a list of states that have not been added to the dfa transition table
-        ArrayList<ArrayList<Integer>> notAddedStates = new ArrayList<ArrayList<Integer>>();
         
-        //while there are still unvisited states
-        while (unvisitedStates.size() > 0) {
-            //grab the first unvisited state
-            ArrayList<Integer> currentState = unvisitedStates.get(0);
-            //remove the state from the unvisited states
-            unvisitedStates.remove(0);
-            //add the state to the visited states
-            visitedStates.add(currentState);
-            //for each alphabet in the dfa alphabet
-            for (int i = 0; i < DFAalphabet.size(); i++) {
-                //find the transition of the current state with the current alphabet
-                ArrayList<Integer> currentTransition = findDFAtransition(NFAtransitionTable, currentState.get(0), DFAalphabet.get(i));
-                //sort the transition
-                Collections.sort(currentTransition);
-                //if the transition is not empty
-                if (currentTransition.size() > 0) {
-                    //if the transition is not in the visited states
-                    if (!visitedStates.contains(currentTransition)) {
-                        //add the transition to the unvisited states
-                        unvisitedStates.add(currentTransition);
-                        //add the transition to the added states
-                        addedStates.add(currentTransition);
-                        //add the transition to the dfa transition table
-                        DFAtransitionTable.put(new Pair<Character, Character>(Character.forDigit(currentState.get(0), 10), DFAalphabet.get(i)), currentTransition);
-                    }
-                    //if the transition is in the visited states
-                    else {
-                        //add the transition to the dfa transition table
-                        DFAtransitionTable.put(new Pair<Character, Character>(Character.forDigit(currentState.get(0), 10), DFAalphabet.get(i)), currentTransition);
-                    }
-                }
-            }
-        }
-
-        //print out the dfa transition table in the correct format
-        System.out.println("DFA transition table: " );
-        for (int i = 0; i < DFAalphabet.size(); i++) {
-            System.out.print("\t" + DFAalphabet.get(i));
-        }
-        System.out.println();
-        for (int i = 0; i < addedStates.size(); i++) {
-            System.out.print(addedStates.get(i) + "\t");
-            for (int j = 0; j < DFAalphabet.size(); j++) {
-                System.out.print(DFAtransitionTable.get(new Pair<Character, Character>(Character.forDigit(addedStates.get(i).get(0), 10), DFAalphabet.get(j))) + "\t");
-            }
-            System.out.println();
-        }
-
-        //find the dfa final states
-        ArrayList<ArrayList<Integer>> DFAfinalStates = new ArrayList<ArrayList<Integer>>();
-        for (int i = 0; i < addedStates.size(); i++) {
-            for (int j = 0; j < NFAfinalStates.length; j++) {
-                if (addedStates.get(i).contains(Integer.parseInt(NFAfinalStates[j]))) {
-                    DFAfinalStates.add(addedStates.get(i));
-                }
-            }
-        }
-
-        //print out the dfa final states
-        System.out.println("DFA final states: " + DFAfinalStates);
-
     }
 
     //combine 2 arraylists into 1
