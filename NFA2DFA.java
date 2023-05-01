@@ -13,6 +13,7 @@ public class NFA2DFA {
         Hashtable<Pair<Character, Character>, ArrayList<Integer>> NFAtransitionTable = returnStruct.getPairedHashTable();
         String NFAstartState = returnStruct.getStartState();
         Character[] NFAalphabet = returnStruct.getAlphabetStrings();
+        String[] NFAacceptingStates = returnStruct.getAcceptingStates();
 
         //create the dfa transition table
         Hashtable<Pair<Character, Character>, ArrayList<Integer>> DFAtransitionTable = new Hashtable<Pair<Character, Character>, ArrayList<Integer>>();
@@ -75,6 +76,7 @@ public class NFA2DFA {
                     }
                     DFAtransition = union(DFAtransition, state1, NFAtransitionTable);
                 }
+                
                 Collections.sort(DFAtransition);
                 //System.out.println("DFA transition for " + DFAstates.get(i) + " with alphabet " + DFAalphabet.get(j) + ": " + DFAtransition);
                 if (!DFAstates.contains(DFAtransition)) {
@@ -85,16 +87,21 @@ public class NFA2DFA {
         }
 
         //find the accepting states for the dfa
-        ArrayList<Integer> DFAacceptingStates = new ArrayList<Integer>();
-        for(int i = 0; i < DFAstates.size(); i++){
-            System.out.println("DFA state: " + DFAstates.get(i));
+        // find the dfa accepting states by checking if the dfa state contains an nfa accepting state
+        ArrayList<Integer> DFAacceptingState = new ArrayList<Integer>();
+        for (int i = 0; i < DFAstates.size(); i++) {
+            for (int j = 0; j < DFAstates.get(i).size(); j++) {
+                for (int k = 0; k < NFAacceptingStates.length; k++) {
+                    if (DFAstates.get(i).get(j) == Integer.parseInt(NFAacceptingStates[k]) && !DFAacceptingState.contains(i)) {
+                        DFAacceptingState.add(i);
+                    }
+                }
             }
         }
 
-        //write out the dfa to a file
-        //writeDFA(DFAtransitionTable, DFAstates, DFAalphabet, DFAstartState, DFAacceptingStates);
-
-    
+        //write the dfa to a new file
+        writeDFA(DFAtransitionTable, DFAstates, DFAalphabet, DFAstartState, DFAacceptingState);
+    }
 
     //write the dfa to a new file in Parse.printDFA format
     public static void writeDFA(Hashtable<Pair<Character, Character>, ArrayList<Integer>> DFAtransitionTable, ArrayList<ArrayList<Integer>> DFAstates, ArrayList<Character> DFAalphabet, ArrayList<Integer> DFAstartState, ArrayList<Integer> DFAacceptingState){
@@ -155,8 +162,8 @@ public class NFA2DFA {
 
      // recursive function to find the lambda closure of a state
      // follows the lambda transitions and adds the states to the lambda closure arraylist
+     // sort the list and dont contain any duplicates make sure to add the state itself to the lambda closure
      public static void findLambdaClosure(Hashtable<Pair<Character, Character>, ArrayList<Integer>> NFAtransitionTable, int state, ArrayList<Integer> lambdaTransList) {
-
         //sort keys by state and then alphabet
         List<Pair<Character, Character>> sortedKeys = new ArrayList<>(NFAtransitionTable.keySet());
         Collections.sort(sortedKeys, Comparator.<Pair<Character, Character>, Character>comparing(Pair::getState).thenComparing(Pair::getAlphabet));
@@ -171,10 +178,12 @@ public class NFA2DFA {
                         }
                     }
                 }
-
                 }
             }
-     }
+        Collections.sort(lambdaTransList);
+
+    }
+     
 
     //finds the transition of a state given an alphabet and lamba closure
     //return the list od states that the state can transition with the given alphabet
