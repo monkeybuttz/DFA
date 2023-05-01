@@ -2,18 +2,29 @@ import java.util.*;
 import java.io.*;
 
 public class NFA2DFA {
-    public static void main(String[] args) throws FileNotFoundException {
-        File NFA = new File("x.nfa");
+    public static void main(String[] args) throws FileNotFoundException, IOException {
+        //check proper arguments were provided
+        if (args.length != 1)
+        {
+            System.out.println("Usage: java NFA2DFA file.nfa");
+            System.exit(0);
+        }
+        String inputFile = args[0];
+        File NFA = new File(inputFile);
         ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>>  returnStruct = Parse.ParseStudentA(NFA);
-        convertNFA2DFA(returnStruct);
+        convertNFA2DFA(returnStruct, NFA);
     }
 
     // takes the NFA in the return structure and converts it to a DFA and writes it to a file
-    public static void convertNFA2DFA(ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>>  returnStruct) {
+    public static void convertNFA2DFA(ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>>  returnStruct, File NFA) throws IOException {
+        try{
         Hashtable<Pair<Character, Character>, ArrayList<Integer>> NFAtransitionTable = returnStruct.getPairedHashTable();
         String NFAstartState = returnStruct.getStartState();
         Character[] NFAalphabet = returnStruct.getAlphabetStrings();
         String[] NFAacceptingStates = returnStruct.getAcceptingStates();
+
+        //get input strings from file
+        ArrayList<String> inputStrings = returnStruct.getInputStrings();
 
         //create the dfa transition table
         Hashtable<Pair<Character, Character>, ArrayList<Integer>> DFAtransitionTable = new Hashtable<Pair<Character, Character>, ArrayList<Integer>>();
@@ -39,8 +50,7 @@ public class NFA2DFA {
 
         //find the transitions for the dfa start state
         //find the lambda closure of each transition
-        //get the union of the lambda closure and the transition
-        //print out the transitions for the dfa start state
+        //get the union of the transitions
         for (int i = 0; i < DFAalphabet.size(); i++) {
             ArrayList<Integer> DFAtransition = new ArrayList<Integer>();
             for (int j = 0; j < DFAstartState.size(); j++) {
@@ -100,13 +110,26 @@ public class NFA2DFA {
         }
 
         //write the dfa to a new file
-        writeDFA(DFAtransitionTable, DFAstates, DFAalphabet, DFAstartState, DFAacceptingState);
+        writeDFA(DFAtransitionTable, DFAstates, DFAalphabet, DFAstartState, DFAacceptingState, inputStrings, NFA);
+    }
+    catch (IOException e) {
+        e.printStackTrace();
+    }
     }
 
-    //write the dfa to a new file in Parse.printDFA format
-    public static void writeDFA(Hashtable<Pair<Character, Character>, ArrayList<Integer>> DFAtransitionTable, ArrayList<ArrayList<Integer>> DFAstates, ArrayList<Character> DFAalphabet, ArrayList<Integer> DFAstartState, ArrayList<Integer> DFAacceptingState){
+    //write the dfa to a new file 
+    public static void writeDFA(Hashtable<Pair<Character, Character>, ArrayList<Integer>> DFAtransitionTable, ArrayList<ArrayList<Integer>> DFAstates, ArrayList<Character> DFAalphabet, ArrayList<Integer> DFAstartState, ArrayList<Integer> DFAacceptingState, ArrayList<String> testStrings, File NFAfile) throws IOException{
         try {
-            File file = new File("x.dfa");
+            //have the file be the same name as the nfa file with .dfa extension
+            String fileName = NFAfile.getName();
+            fileName = fileName.substring(0, 1);
+            fileName = fileName + ".dfa";
+            File file = new File(fileName);
+            if (file.createNewFile()) {
+                System.out.println("File created: " + file.getName());
+            } else {
+                System.out.println("File already exists.");
+            }
             FileWriter fileWriter = new FileWriter(file);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             bufferedWriter.write("|Q|: " + DFAstates.size());
@@ -121,20 +144,37 @@ public class NFA2DFA {
             
             // write out the each of the states and their transitions
             for (int i = 0; i < DFAstates.size(); i++) {
-                bufferedWriter.write(i + ": ");
+                bufferedWriter.write( "\t" + i + ":");
                 for (int j = 0; j < DFAalphabet.size(); j++) {
-                    bufferedWriter.write("\t" + DFAalphabet.get(j) + ": " + DFAtransitionTable.get(new Pair<Character, Character>(Character.forDigit(i, 10), DFAalphabet.get(j))));
-                }
+                    if (DFAtransitionTable.get(new Pair<Character, Character>(Character.forDigit(i, 10), DFAalphabet.get(j))) == null) {
+                        bufferedWriter.write("    " + DFAstates.size());
+                    } else {
+                        bufferedWriter.write("     " + DFAstates.indexOf(DFAtransitionTable.get(new Pair<Character, Character>(Character.forDigit(i, 10), DFAalphabet.get(j)))));
+                    }
+                 }
                 bufferedWriter.newLine();
             }
             bufferedWriter.write("------------------------------");
             bufferedWriter.newLine();
-            bufferedWriter.write("Initial state: " + DFAstates.indexOf(DFAstartState));
+            bufferedWriter.write("Initial State: " + DFAstates.indexOf(DFAstartState));
             bufferedWriter.newLine();
+            bufferedWriter.write("Accepting State(s): ");
+            for (int i = 0; i < DFAacceptingState.size(); i++) {
+                if(i == DFAacceptingState.size() - 1)
+                    bufferedWriter.write(DFAacceptingState.get(i) + "");
+                else
+                    bufferedWriter.write(DFAacceptingState.get(i) + ",");
 
-
-
-
+            }
+            bufferedWriter.newLine();
+            bufferedWriter.newLine();
+            bufferedWriter.write("-- Input strings for testing -----------");
+            bufferedWriter.newLine();
+            for (int i = 0; i < testStrings.size(); i++) {
+                bufferedWriter.write(testStrings.get(i));
+                bufferedWriter.newLine();
+            }
+            
             bufferedWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -181,7 +221,6 @@ public class NFA2DFA {
                 }
             }
         Collections.sort(lambdaTransList);
-
     }
      
 
