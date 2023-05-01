@@ -85,6 +85,49 @@ public class NFA2DFA {
                 DFAtransitionTable.put(new Pair<Character, Character>(Character.forDigit(i, 10), DFAalphabet.get(j)), DFAtransition);
             }
         }
+        writeDFA(DFAtransitionTable, DFAstates, DFAalphabet, DFAstartState);
+    }
+
+    //write the dfa to a new file
+    public static void writeDFA(Hashtable<Pair<Character, Character>, ArrayList<Integer>> DFAtransitionTable, ArrayList<ArrayList<Integer>> DFAstates, ArrayList<Character> DFAalphabet, ArrayList<Integer> DFAstartState){
+        try {
+            File file = new File("x.dfa");
+            FileWriter fileWriter = new FileWriter(file);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write("DFA");
+            bufferedWriter.newLine();
+            bufferedWriter.write("states");
+            bufferedWriter.newLine();
+            for (int i = 0; i < DFAstates.size(); i++) {
+                bufferedWriter.write(Character.forDigit(i, 10));
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.write("alphabet");
+            bufferedWriter.newLine();
+            for (int i = 0; i < DFAalphabet.size(); i++) {
+                bufferedWriter.write(DFAalphabet.get(i));
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.write("start");
+            bufferedWriter.newLine();
+            bufferedWriter.write(Character.forDigit(DFAstates.indexOf(DFAstartState), 10));
+            bufferedWriter.newLine();
+            bufferedWriter.write("transitions");
+            bufferedWriter.newLine();
+            for (int i = 0; i < DFAstates.size(); i++) {
+                for (int j = 0; j < DFAalphabet.size(); j++) {
+                    bufferedWriter.write(Character.forDigit(i, 10));
+                    bufferedWriter.write(" ");
+                    bufferedWriter.write(DFAalphabet.get(j));
+                    bufferedWriter.write(" ");
+                    bufferedWriter.write(Character.forDigit(DFAstates.indexOf(DFAtransitionTable.get(new Pair<Character, Character>(Character.forDigit(i, 10), DFAalphabet.get(j)))), 10));
+                    bufferedWriter.newLine();
+                }
+            }
+            bufferedWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     //combine 2 arraylists into 1
