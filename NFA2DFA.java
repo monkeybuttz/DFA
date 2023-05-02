@@ -1,3 +1,11 @@
+// This program converts an NFA to a DFA.
+// print the DFA to a new file.
+// By Greg Yonan
+// IT 328 Section 1
+// Programming Assignment 2 + 3
+// Student B
+// 4/14/23
+
 import java.util.*;
 import java.io.*;
 
