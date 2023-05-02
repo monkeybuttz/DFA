@@ -27,14 +27,14 @@ public class minimizeDFA {
     //     File DFA = new File(inputFile);
 
     //     //parse original dfa file and print
-    //     ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>>  returnStruct = Parse.ParseStudentB(DFA);
+    //     ReturnStructure<Hashtable<Pair<Integer, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>>  returnStruct = Parse.ParseStudentB(DFA);
     //     System.out.println("DFA from " + inputFile + ":\n");
     //     Parse.printDFA(returnStruct);
     //     System.out.println("\nParsing results of strings attached in " + inputFile + ":");
     //     Parse.testDFAStrings(returnStruct);
 
     //     //find min dfa and print
-    //     ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> minDFA = findMinDFA(returnStruct);
+    //     ReturnStructure<Hashtable<Pair<Integer, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> minDFA = findMinDFA(returnStruct);
     //     System.out.println("\n\nMinimized DFA from " + inputFile + ":\n");
     //     Parse.printDFA(minDFA);
     //     System.out.println("\nParsing results of strings attached in " + inputFile + ":\n");
@@ -43,13 +43,13 @@ public class minimizeDFA {
     //     System.out.println("\n|Q| " + returnStruct.getNumStates() + " -> " + minDFA.getNumStates());
     // }
 
-    public static ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> findMinDFA(ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> returnStruct)
+    public static ReturnStructure<Hashtable<Pair<Integer, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> findMinDFA(ReturnStructure<Hashtable<Pair<Integer, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> returnStruct)
     {
         //save stuff from return structure
         int numStates = returnStruct.getNumStates();
         List<String> acceptingStates = Arrays.asList(returnStruct.getAcceptingStates());
         List<Character> letters = Arrays.asList(returnStruct.getAlphabetStrings());
-        Hashtable<Pair<Character, Character>, ArrayList<Integer>> transitions = returnStruct.getPairedHashTable();
+        Hashtable<Pair<Integer, Character>, ArrayList<Integer>> transitions = returnStruct.getPairedHashTable();
 
         //create matrix to find min DFA
         boolean [][] matrix = new boolean[numStates][numStates];
@@ -92,8 +92,8 @@ public class minimizeDFA {
                         //for all letters, compare transitions of each state at each letter
                         for (char letter : letters)
                         {
-                            Pair<Character, Character> iPair = new Pair<Character, Character>((Character) Integer.toString(i).charAt(0), letter);
-                            Pair<Character, Character> jPair = new Pair<Character, Character>((Character) Integer.toString(j).charAt(0), letter);
+                            Pair<Integer, Character> iPair = new Pair<Integer, Character>(i, letter);
+                            Pair<Integer, Character> jPair = new Pair<Integer, Character>(j, letter);
                             
                             if (transitions.containsKey(iPair) && transitions.containsKey(jPair))
                             {
@@ -148,16 +148,16 @@ public class minimizeDFA {
         }
 
         // Step 5: Create a new set of transitions for the minimized DFA
-        Hashtable<Pair<Character, Character>, ArrayList<Integer>> newTransitions = new Hashtable<>();
-        List<Pair<Character, Character>> sortedKeys = new ArrayList<>(transitions.keySet());
-        Collections.sort(sortedKeys, Comparator.<Pair<Character, Character>, Character>comparing(Pair::getState).thenComparing(Pair::getAlphabet)); //sort keys by state and then alphabet
+        Hashtable<Pair<Integer, Character>, ArrayList<Integer>> newTransitions = new Hashtable<>();
+        List<Pair<Integer, Character>> sortedKeys = new ArrayList<>(transitions.keySet());
+        Collections.sort(sortedKeys, Comparator.comparing((Pair<Integer, Character> pair) -> pair.getState()).thenComparing(pair -> pair.getAlphabet())); //sort keys by state and then alphabet
         
         int count = 0;
 
-        for (Pair<Character, Character> pair : sortedKeys) 
+        for (Pair<Integer, Character> pair : sortedKeys) 
         {
             ArrayList<Integer> temp = new ArrayList<>();
-            int oldState = pair.getState() - '0';
+            int oldState = pair.getState();
             int newState = transitions.get(pair).get(0);
 
             //if old state still exists in new states (is distinguishable), add new (destination) state to array list 
@@ -185,7 +185,7 @@ public class minimizeDFA {
         }
 
         // Step 6: Create a new ReturnStructure object for the minimized DFA
-        ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> minimizedDFA = new ReturnStructure<>(newTransitions, returnStruct.getStartState(), newAcceptStates, returnStruct.getAlphabetStrings(), returnStruct.getInputStrings());
+        ReturnStructure<Hashtable<Pair<Integer, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> minimizedDFA = new ReturnStructure<>(newTransitions, returnStruct.getStartState(), newAcceptStates, returnStruct.getAlphabetStrings(), returnStruct.getInputStrings());
         return minimizedDFA;
     }
 

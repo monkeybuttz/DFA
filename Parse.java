@@ -3,13 +3,13 @@ import java.util.*;
 
 public class Parse {
     // ParseStudentA should read the file and store the transition table in a hash table
-    public static ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> ParseStudentA(File NFA) throws FileNotFoundException {
+    public static ReturnStructure<Hashtable<Pair<Integer, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> ParseStudentA(File NFA) throws FileNotFoundException {
         Scanner scan = new Scanner(NFA);
 
         // main data structure
         // key: Pair<current_state, alphabet>
         // value: ArrayList<transition_states>
-        Hashtable<Pair<Character, Character>, ArrayList<Integer>> transitionTable = new Hashtable<Pair<Character, Character>, ArrayList<Integer>>();
+        Hashtable<Pair<Integer, Character>, ArrayList<Integer>> transitionTable = new Hashtable<Pair<Integer, Character>, ArrayList<Integer>>();
 
         String num_of_states = scan.nextLine();
         String[] stateArray = num_of_states.split(" ");
@@ -28,12 +28,12 @@ public class Parse {
         for(Integer i = 0; i < states; i++) {
             String line = scan.nextLine();
             String[] lineArray = line.split(" ");
-            Character key = lineArray[0].charAt(0);
+            Integer key = Integer.parseInt(lineArray[0].replace(":", ""));
             for(int j = 1; j < lineArray.length; j++) {
                 String value = lineArray[j];
                 String[] values = value.split("");
                 ArrayList<Integer> nodes = new ArrayList<Integer>();
-                Pair<Character, Character> transitions = new Pair<Character, Character>(key, alphabetArray[j-1]);
+                Pair<Integer, Character> transitions = new Pair<Integer, Character>(key, alphabetArray[j-1]);
                 for(int k = 1; k < values.length-1; k++) {
                     String check = values[k];
                     if (Character.isDigit(check.charAt(0)) == true){
@@ -64,17 +64,17 @@ public class Parse {
         }
         scan.close();
 
-        ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> returnStructure = new ReturnStructure<>(transitionTable, startState, finalStatesArray, alphabetArray, input);
+        ReturnStructure<Hashtable<Pair<Integer, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> returnStructure = new ReturnStructure<>(transitionTable, startState, finalStatesArray, alphabetArray, input);
         return returnStructure;
     }
 
-    public static ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> ParseStudentB(File DFA) throws FileNotFoundException {
+    public static ReturnStructure<Hashtable<Pair<Integer, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> ParseStudentB(File DFA) throws FileNotFoundException {
         Scanner scan = new Scanner(DFA);
 
         // main data structure
         // key: Pair<current_state, alphabet>
         // value: ArrayList<transition_states>
-        Hashtable<Pair<Character, Character>, ArrayList<Integer>> transitionTable = new Hashtable<Pair<Character, Character>, ArrayList<Integer>>();
+        Hashtable<Pair<Integer, Character>, ArrayList<Integer>> transitionTable = new Hashtable<Pair<Integer, Character>, ArrayList<Integer>>();
 
         String num_of_states = scan.nextLine();
         String[] stateArray = num_of_states.split(" ");
@@ -91,15 +91,15 @@ public class Parse {
 
         for(Integer i = 0; i < states; i++) {
             String line = scan.nextLine();
-            String[] lineArray = line.split("['' ]+");
-            Character key = lineArray[1].charAt(0);
+            String[] lineArray = line.split("['': ]+");
+            int key = Integer.parseInt(lineArray[1]);
             for(int j = 2; j < lineArray.length; j++) {
                 String value = lineArray[j];
                 //String[] values = value.split("");
                 ArrayList<Integer> nodes = new ArrayList<Integer>();
-                Pair<Character, Character> transitions = new Pair<Character, Character>(key, alphabetArray[j-2]);
+                Pair<Integer, Character> transitions = new Pair<Integer, Character>(key, alphabetArray[j-2]);
 
-                if (Character.isDigit(value.charAt(0)))
+                if (Character.isDigit(value.charAt(0))) // could  be a problem with new pair format
                 {
                     nodes.add(Integer.parseInt(value));
                 }
@@ -128,12 +128,12 @@ public class Parse {
         }
         scan.close();
 
-        ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> returnStructure = new ReturnStructure<>(transitionTable, startState, finalStatesArray, alphabetArray, input);
+        ReturnStructure<Hashtable<Pair<Integer, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> returnStructure = new ReturnStructure<>(transitionTable, startState, finalStatesArray, alphabetArray, input);
         return returnStructure;
     }
 
     //method to print a DFA
-    public static void printDFA(ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> dfa)
+    public static void printDFA(ReturnStructure<Hashtable<Pair<Integer, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> dfa)
     {
         System.out.print("Sigma:");
         for(char letter : dfa.getAlphabetStrings())
@@ -143,11 +143,11 @@ public class Parse {
         System.out.print("\n------------------------------");
 
         //sort keys by state and then alphabet
-        List<Pair<Character, Character>> sortedKeys = new ArrayList<>(dfa.getPairedHashTable().keySet());
-        Collections.sort(sortedKeys, Comparator.<Pair<Character, Character>, Character>comparing(Pair::getState).thenComparing(Pair::getAlphabet));
+        List<Pair<Integer, Character>> sortedKeys = new ArrayList<>(dfa.getPairedHashTable().keySet());
+        Collections.sort(sortedKeys, Comparator.comparing((Pair<Integer, Character> pair) -> pair.getState()).thenComparing(pair -> pair.getAlphabet()));
 
         int count = 0;
-        for (Pair<Character, Character> currentKey : sortedKeys)
+        for (Pair<Integer, Character> currentKey : sortedKeys)
         {
             //every time theres a new letter, print state
             if (count % dfa.getAlphabetStrings().length == 0)
@@ -161,6 +161,7 @@ public class Parse {
         System.out.println(dfa.getStartState() + ": Initial State");
 
         String[] accept = dfa.getAcceptingStates();
+        Arrays.sort(accept, Comparator.comparingInt(Integer::parseInt));
 
         for (int i = 0; i < accept.length; i++)
         {
@@ -172,11 +173,11 @@ public class Parse {
     }
 
     //method to test input strings on DFA and prints parsing results
-    public static void testDFAStrings(ReturnStructure<Hashtable<Pair<Character, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> dfa)
+    public static void testDFAStrings(ReturnStructure<Hashtable<Pair<Integer, Character>, ArrayList<Integer>>, String, String[], Character[], ArrayList<String>> dfa)
     {
         ArrayList<String> testStrings = dfa.getInputStrings();
         List<String> acceptingStates = Arrays.asList(dfa.getAcceptingStates());
-        Hashtable<Pair<Character, Character>, ArrayList<Integer>> transitions = dfa.getPairedHashTable();
+        Hashtable<Pair<Integer, Character>, ArrayList<Integer>> transitions = dfa.getPairedHashTable();
 
         int yes = 0;
         int no = 0;
@@ -185,40 +186,39 @@ public class Parse {
         {
             String currState = dfa.getStartState();
             String currString = testStrings.get(i);
-
-            if(currString.length() == 0 && acceptingStates.contains(currState)) //empty string
-            {
-                System.out.print("Yes  ");
-                yes++;
-            }
+            boolean isAccepted = true;
 
             for (int j = 0; j < currString.length(); j++) //each char
             {
                 char currchar = currString.charAt(j);
-                Pair<Character,Character> pair = new Pair<Character,Character>(currState.charAt(0), currchar);
+                Pair<Integer,Character> pair = new Pair<Integer,Character>(Integer.parseInt(currState), currchar);
                 
-                currState = String.valueOf(transitions.get(pair).get(0));
-                
-                if (j == (currString.length() - 1))
+                ArrayList<Integer> transitionStates = transitions.get(pair);
+                if (transitionStates == null || transitionStates.isEmpty()) 
                 {
-                    if (acceptingStates.contains(currState))
-                    {
-                        System.out.print("Yes  ");
-                        yes++;
-
-                        if (yes + no == 15)
-                            System.out.print("\n");
-                    }
-                    else
-                    {
-                        System.out.print("No   ");
-                        no++;
-
-                        if (yes + no == 15)
-                            System.out.print("\n");
-                    }
+                    isAccepted = false;
+                    break;
                 }
+
+                currState = String.valueOf(transitionStates.get(0));
             }
+
+            if (isAccepted && acceptingStates.contains(currState)) 
+            {
+                System.out.print("Yes  ");
+                yes++;
+            } 
+            else 
+            {
+                System.out.print("No   ");
+                no++;
+            }
+
+            if ((i + 1) % 15 == 0) 
+            {
+                System.out.println();
+            }
+
         }
         System.out.println("\n\nYes: " + yes + " No: " + no);
     }

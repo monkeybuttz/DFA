@@ -2,13 +2,13 @@ import java.util.*;
 
 public class ReturnStructure<PairedHashTable, startState, acceptingStates, alphabetArray, inputStrings> {
 
-    private Hashtable<Pair<Character, Character>, ArrayList<Integer>> PairedHashTable;
+    private Hashtable<Pair<Integer, Character>, ArrayList<Integer>> PairedHashTable;
     private String startState;
     private String[] acceptingStates;
     private Character[] alphabetStrings;
     private ArrayList<String> inputStrings;
 
-    public ReturnStructure(Hashtable<Pair<Character, Character>, ArrayList<Integer>> PairedHashTable, String startState, String[] acceptingStates, Character[] alphabetStrings, ArrayList<String> inputStrings) {
+    public ReturnStructure(Hashtable<Pair<Integer, Character>, ArrayList<Integer>> PairedHashTable, String startState, String[] acceptingStates, Character[] alphabetStrings, ArrayList<String> inputStrings) {
         this.PairedHashTable = PairedHashTable;
         this.startState = startState;
         this.acceptingStates = acceptingStates;
@@ -16,18 +16,18 @@ public class ReturnStructure<PairedHashTable, startState, acceptingStates, alpha
         this.inputStrings = inputStrings;
     }
 
-    public Hashtable<Pair<Character, Character>, ArrayList<Integer>> getPairedHashTable() {
+    public Hashtable<Pair<Integer, Character>, ArrayList<Integer>> getPairedHashTable() {
         return PairedHashTable;
     }
 
     //prints hash table of pairs and list of transition nodes, useful for debugging
-    public void printHashTable(Hashtable<Pair<Character, Character>, ArrayList<Integer>> pairHashTbl)
+    public void printHashTable(Hashtable<Pair<Integer, Character>, ArrayList<Integer>> pairHashTbl)
     {
         //sort keys by state and then alphabet
-        List<Pair<Character, Character>> sortedKeys = new ArrayList<>(pairHashTbl.keySet());
-        Collections.sort(sortedKeys, Comparator.<Pair<Character, Character>, Character>comparing(Pair::getState).thenComparing(Pair::getAlphabet));
+        List<Pair<Integer, Character>> sortedKeys = new ArrayList<>(pairHashTbl.keySet());
+        Collections.sort(sortedKeys, Comparator.comparing((Pair<Integer, Character> pair) -> pair.getState()).thenComparing(pair -> pair.getAlphabet()));
 
-        for (Pair<Character, Character> currentKey : sortedKeys) 
+        for (Pair<Integer, Character> currentKey : sortedKeys) 
         {
             System.out.println("State: " + currentKey.getState() + " Alphabet: " + currentKey.getAlphabet());
             System.out.println("Transition nodes: " + pairHashTbl.get(currentKey) + "\n");
@@ -36,17 +36,18 @@ public class ReturnStructure<PairedHashTable, startState, acceptingStates, alpha
 
     //returns number of states in a complicated way
     public int getNumStates() {
-        List<Pair<Character, Character>> keys = new ArrayList<>(getPairedHashTable().keySet());
+        List<Pair<Integer, Character>> keys = new ArrayList<>(getPairedHashTable().keySet());
         int numLetters = 0;
+        int tableSize = getPairedHashTable().size();
 
-        for (Pair<Character, Character> key : keys) 
+        for (Pair<Integer, Character> key : keys) 
         {
-            if (key.getState() == '0')
+            if (key.getState() == 0)
             {
                 numLetters++;
             }
         }
-        return getPairedHashTable().size() / numLetters;
+        return tableSize / numLetters;
     }
 
     public String getStartState() {
@@ -65,7 +66,7 @@ public class ReturnStructure<PairedHashTable, startState, acceptingStates, alpha
         return inputStrings;
     }
 
-    public void setPairedHashTable(Hashtable<Pair<Character, Character>, ArrayList<Integer>> PairedHashTable) {
+    public void setPairedHashTable(Hashtable<Pair<Integer, Character>, ArrayList<Integer>> PairedHashTable) {
         this.PairedHashTable = PairedHashTable;
     }
 
